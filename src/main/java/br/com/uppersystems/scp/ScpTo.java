@@ -9,10 +9,10 @@ public class ScpTo {
 		FileInputStream fis = null;
 		try {
 
-			String localFile = "/Users/filipegermano/Downloads/testescpjava.txt";
+			String localPathnameFile = "/Users/filipegermano/Downloads/testescpjava.txt";
 			String nfsUser = "ubuntu";
 			String nfsHost = "ec2-18-224-229-88.us-east-2.compute.amazonaws.com";
-			String remoteDir = "/tmp";
+			String remotePathnameFile = "/tmp";
 			//usar, hoje não é criado se o arquivo estiver vazio
 			Boolean createEmptyFile = false;
 
@@ -24,9 +24,9 @@ public class ScpTo {
 			session.connect();
 			
 			// exec 'scp -t rfile' remotely
-			remoteDir = remoteDir.replace("'", "'\"'\"'");
-			remoteDir = "'" + remoteDir + "'";
-			String command = "scp " + " -t " + remoteDir;
+			remotePathnameFile = remotePathnameFile.replace("'", "'\"'\"'");
+			remotePathnameFile = "'" + remotePathnameFile + "'";
+			String command = "scp " + " -t " + remotePathnameFile;
 			
 			Channel channel = session.openChannel("exec");
 			((ChannelExec) channel).setCommand(command);
@@ -41,15 +41,15 @@ public class ScpTo {
 				System.exit(0);
 			}
 
-			File _lfile = new File(localFile);
+			File _lfile = new File(localPathnameFile);
 
 			// send "C0644 filesize filename", where filename should not include '/'
 			long filesize = _lfile.length();
 			command = "C0644 " + filesize + " ";
-			if (localFile.lastIndexOf('/') > 0) {
-				command += localFile.substring(localFile.lastIndexOf('/') + 1);
+			if (localPathnameFile.lastIndexOf('/') > 0) {
+				command += localPathnameFile.substring(localPathnameFile.lastIndexOf('/') + 1);
 			} else {
-				command += localFile;
+				command += localPathnameFile;
 			}
 			command += "\n";
 			out.write(command.getBytes());
@@ -59,7 +59,7 @@ public class ScpTo {
 			}
 
 			// send a content of lfile
-			fis = new FileInputStream(localFile);
+			fis = new FileInputStream(localPathnameFile);
 			byte[] buf = new byte[1024];
 			while (true) {
 				int len = fis.read(buf, 0, buf.length);
